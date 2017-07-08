@@ -1,24 +1,22 @@
-#include "pitches.h"
+#include <SoftwareSerial.h>
+
 int bendSensorPin = A0; //LED connected
 int sensorValue = 0;
-int otherArduino = 11;
+
+SoftwareSerial mySerial(5, 5); // RX, TX
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(otherArduino, OUTPUT);
+  mySerial.begin(4800);
+  mySerial.flush();
 }  
 
 void loop() {
-  byte brightness;
-  // put your main code here, to run repeatedly:
   // read the value from the sensor:
-  int sensorValue = analogRead(bendSensorPin);
-  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):
-  float voltage = sensorValue * (5.0 / 1023.0);
-  // print out the value you read:
-  brightness = 256 * (voltage/2);
+  int sensorValue = analogRead(bendSensorPin); // A value between 0 and 1023
   
-  analogWrite(otherArduino, voltage);
+  //Serial.println(sensorValue);
+  mySerial.print(sensorValue);
   
   delay(1);
 }
