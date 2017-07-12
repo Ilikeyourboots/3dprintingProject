@@ -4,26 +4,45 @@ Servo myservo;
 
 int servoPin = 9;
 int bendVal = 0;
-int val = 0;
 
-SoftwareSerial mySerial(5, 5); // RX, TX
+
+SoftwareSerial mySerial(11, 10); // RX, TX
 
 void setup() {
   myservo.attach(servoPin);
 
   Serial.begin(9600);
-  Serial.flush();
   mySerial.begin(4800);
-  mySerial.flush();
 }
 
 void loop() {
-  if (mySerial.available()>0){
-    bendVal = mySerial.parseInt();
-    val = map(bendVal, 0, 1023, 0, 180);     // Todo: find ranges for each bend sensor
-    myservo.write(val); // sets the servo position according to the scaled value
-    Serial.println(bendVal);
-    //delay(500);
+  while (mySerial.available()>0){  
+    byte input = mySerial.read();
+    bendVal = (int) input;
+    
+    //Serial.println(bendVal);
+    
+    // Todo: find ranges for each bend sensor
+    setServoDegree(bendVal);
     //Todo: how to control speed
+    
+    //should set the servo every 5 seconds
+    delay(1000);
   }
+  
+
+  
 }
+
+void setServoDegree(int degree) {
+  Serial.println(degree);
+  // just to make sure we aren't hurting the servo
+  if (degree > 180){
+    degree = 180;
+  } else if(degree < 0){
+    degree = 0;
+  }
+   myservo.write(degree); // sets the servo position according to the scaled value
+   
+}
+
